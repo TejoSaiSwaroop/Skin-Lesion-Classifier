@@ -2,9 +2,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.models import Model
-from tensorflow.keras.preprocessing import image
-import numpy as np
-import os
 
 # Data augmentation for the training set
 train_datagen = ImageDataGenerator(
@@ -56,25 +53,3 @@ model.fit(train_generator, epochs=10, validation_data=test_generator)
 
 # Save the model
 model.save('skin_lesion_classifier.h5')
-
-# Function to predict a single image
-def predict_image(img_path, model, labels):
-    img = image.load_img(img_path, target_size=(224, 224))
-    img_array = image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
-    img_array /= 255.
-
-    predictions = model.predict(img_array)
-    predicted_class_idx = np.argmax(predictions[0])
-    predicted_class = labels[predicted_class_idx]
-    return predicted_class
-
-# Load the saved model
-from tensorflow.keras.models import load_model
-model = load_model('skin_lesion_classifier.h5')
-
-# Example usage
-labels = list(train_generator.class_indices.keys())
-image = 'acne.jpg'
-predicted_class = predict_image(image, model, labels)
-print(f"Predicted class: {predicted_class}")
